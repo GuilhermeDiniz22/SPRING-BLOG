@@ -29,7 +29,8 @@ public class SecurityConfig {
 
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public SecurityConfig(UserDetailsService userDetailsService, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfig(UserDetailsService userDetailsService,
+            JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.userDetailsService = userDetailsService;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
@@ -49,14 +50,14 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf().disable()
-                .authorizeHttpRequests((authorize)
-                        -> authorize.requestMatchers(HttpMethod.GET, "/**").permitAll()
+                .authorizeHttpRequests((authorize) -> authorize.requestMatchers(HttpMethod.GET, "/**").permitAll()
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/registro").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "swagger-ui.html", "/").permitAll()
                         .anyRequest().authenticated())
-                .exceptionHandling(exception ->
-                        exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
