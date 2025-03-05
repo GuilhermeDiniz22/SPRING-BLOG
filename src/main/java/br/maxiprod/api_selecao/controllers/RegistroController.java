@@ -1,7 +1,6 @@
 package br.maxiprod.api_selecao.controllers;
 
 import br.com.vendas_api.dto.RegistroDtoSaida;
-import br.com.vendas_api.service.RegistroService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
