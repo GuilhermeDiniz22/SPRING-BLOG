@@ -1,39 +1,80 @@
 package br.maxiprod.api_selecao.controllers;
 
-import br.maxiprod.api_selecao.dto.JWTAuthResponse;
-import br.maxiprod.api_selecao.dto.RegistroRequest;
-import br.maxiprod.api_selecao.dto.LoginRequest;
-import br.maxiprod.api_selecao.service.AuthService;
+
+import br.maxiprod.api_selecao.dto.LoginRequestDto;
+import br.maxiprod.api_selecao.dto.RegistroDtoRequest;
+import br.maxiprod.api_selecao.dto.ResponseDto;
+import br.maxiprod.api_selecao.models.User;
+import br.maxiprod.api_selecao.repository.UserRepository;
+import br.maxiprod.api_selecao.security.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("auth")
-@Tag(name = "Autenticação", description = "Endpoints para login e registro de usuários")
+@RequestMapping("/auth")
+@Tag(
+        name = "API User",
+        description = "API responsável pelos serviços relacionados a autenticação e registro de usuários no sistema."
+)
 public class AuthController {
 
     @Autowired
-    private AuthService authService;
+    private TokenService tokenService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @PostMapping("/login")
-    @Operation(summary = "Realiza login", description = "Autentica o usuário e retorna um token JWT.")
-    public ResponseEntity<JWTAuthResponse> login(@RequestBody LoginRequest request) {
-        String token = authService.login(request);
+    @Operation(
+            summary = "Realizar login de um usuário",
+            description = "Autentica um usuário no sistema com base em suas credenciais (email e senha). Retorna um token JWT em caso de sucesso."
+    )
+    public ResponseEntity login(@RequestBody LoginRequestDto loginRequestDto) {
+        User user = userRepository.findByEmail(loginRequestDto.getEmail());
 
-        JWTAuthResponse jwtAuthResponse = new JWTAuthResponse();
-        jwtAuthResponse.setAccessToken(token);
+        if (user == null)
+            throw new RuntimeException("Usuário com email " + loginRequestDto.getEmail() + " não encontrado!");
 
-        return ResponseEntity.ok(jwtAuthResponse);
+        if (passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
+            var token = tokenService.generateToken(user);
+            return ResponseEntity.ok(new ResponseDto(user.getNome(), token));
+        }
+
+        return ResponseEntity.badRequest().build();
     }
 
     @PostMapping("/registro")
-    @Operation(summary = "Registra um novo usuário", description = "Cria uma nova conta de usuário.")
-    public ResponseEntity<String> registro(@RequestBody RegistroRequest request) {
-        String response = authService.register(request);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    @Operation(
+            summary = "Registrar um novo usuário",
+            description = "Cria um novo usuário no sistema com os dados fornecidos (nome, email e senha). Retorna um token JWT em caso de sucesso."
+    )
+    public ResponseEntity registro(@RequestBody @Valid RegistroDtoRequest registroDtoRequest) {
+        User user = userRepository.findByEmail(registroDtoRequest.getEmail());
+
+        if (user == null) {
+            User novoUser = new User();
+            novoUser.setNome(registroDtoRequest.getNome());
+            novoUser.setEmail(registroDtoRequest.getEmail());
+            novoUser.setPassword(passwordEncoder.encode(registroDtoRequest.getPassword()));
+
+            User retorno = userRepository.save(novoUser);
+
+            var token = tokenService.generateToken(novoUser);
+
+            return ResponseEntity.ok(new ResponseDto(retorno.getNome(), token));
+        }
+
+        return ResponseEntity.badRequest().build();
     }
 }

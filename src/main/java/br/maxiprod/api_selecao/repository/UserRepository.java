@@ -1,22 +1,15 @@
 package br.maxiprod.api_selecao.repository;
 
+import br.maxiprod.api_selecao.models.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.stereotype.Repository;
+
 import java.util.Optional;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import br.maxiprod.api_selecao.models.User;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
-
+@Repository
 @RepositoryRestResource(exported = false)
-public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByEmail(String email);
+public interface UserRepository extends JpaRepository<User, String> {
 
-    Optional<User> findByEmailOrUsername(String email, String username);
-
-    Optional<User> findByUsername(String username);
-
-    Boolean existsByUsername(String username);
-
-    Boolean existsByEmail(String email);
-
+    User findByEmail(String email);
 }
