@@ -1,0 +1,17 @@
+para testar a aplicação eu fiz uma API com o Spring boot 3 e Java 17
+
+é necessário ter o java 17+ e o MYSQL instalados para testar a API, pois está API está com acesso ao banco de dados
+
+para configurar o banco de dados só é necessário criar um Schema com o nome de gastos, a senha é root e o user root
+
+se quiser modificar o acesso ao banco de dados vc deve editar o arquivo application.properties
+
+o endereço é o localhost:8080/
+
+a API já está documentada e a página do Swagger aparecerá no endereço localhost:8080/
+
+o endereço do MYSQL é o localhost:3306, tudo está no application.properties
+
+se tiver dúvida é só mandar um email para guilhermediniz303@gmail.com
+
+a melhor ide de java é o intelliJ Idea
