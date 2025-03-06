@@ -18,7 +18,7 @@ public class SwaggerConfig {
         final String securitySchemeName = "bearerAuth";
         return new OpenAPI()
                 .info(new Info()
-                        .title("livraria-spring")
+                        .title("SPRING-BLOG")
                         .version("1.0")
                         .description("API de um blog de perguntas e respostas")
                         .contact(new Contact()
