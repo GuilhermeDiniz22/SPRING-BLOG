@@ -7,25 +7,25 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.4.2</version>
-		<relativePath /> <!-- lookup parent from repository -->
+		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>br.blog</groupId>
 	<artifactId>api-blog</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>api-blog</name>
 	<description>api para um blog</description>
-	<url />
+	<url/>
 	<licenses>
-		<license />
+		<license/>
 	</licenses>
 	<developers>
-		<developer />
+		<developer/>
 	</developers>
 	<scm>
-		<connection />
-		<developerConnection />
-		<tag />
-		<url />
+		<connection/>
+		<developerConnection/>
+		<tag/>
+		<url/>
 	</scm>
 	<properties>
 		<java.version>17</java.version>
@@ -98,7 +98,7 @@
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-jackson</artifactId>
-			<version>0.12.6</version>
+			<version>0.13.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
